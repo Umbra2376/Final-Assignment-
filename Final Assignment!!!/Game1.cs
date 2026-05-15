@@ -12,7 +12,7 @@ namespace Final_Assignment___
         private SpriteBatch _spriteBatch;
         KeyboardState currentState, oldState;
         SpriteFont menuFont, healthFont;
-        Rectangle window, menuLocation, moveInfoLocation, battleLocation, arrowSize, enemyLocation, charHealthBar, enemyHealthBar, charHealthImg, enemyHealthImg, charIconSize, enemyIconSize, hyperLocation, impactLocation;
+        Rectangle window, menuLocation, moveInfoLocation, battleLocation, arrowSize, enemyLocation, charHealthBar, enemyHealthBar, charHealthImg, enemyHealthImg, charIconSize, enemyIconSize;
         Snorlax snorlax;
         Texture2D snorlaxTexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon, hyperBeam, hyperBeamImpact;
         Vector2 moveType, moveName1, moveName2, moveName3, moveName4, typeText, PPText, movePP, charNameText, enemyNameText, totalHealthText, healthAmountText;

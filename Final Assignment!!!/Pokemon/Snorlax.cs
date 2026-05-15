@@ -15,8 +15,8 @@ namespace Pokemon
     class Snorlax
     {
         private Texture2D _texture, _hyperTexture, _impactTexture;
-        private Rectangle _location, _hyper_Location, _impact_Location;
-        private bool _using_Headbutt, _using_Body_Press, _using_Hyper_Beam, _using_Defense_Curl, _draw_Hyper_Beam;
+        private Rectangle _location, _hyper_Location, _impact_Location, _enemy_Location;
+        private bool _using_Headbutt, _using_Body_Press, _using_Hyper_Beam, _using_Defense_Curl, _hyper_hit;
         private string _move1, _move2, _move3, _move4, _move_type, _name;
         private int _speed, _health, _defense, _attack, _sDefense, _move1_PP, _move2_PP, _move3_PP, _move4_PP;
         private float _battle_time, _frame_time, _hyper_interval;
@@ -43,8 +43,9 @@ namespace Pokemon
             _defense = stats.Next(50, 81);
             _attack = stats.Next(100, 121);
             _sDefense = stats.Next(100, 121);
-            _hyper_Location = new Rectangle(300, 300, 300, 300);
-            _impact_Location = new Rectangle(610, 90, 300, 300);
+            _hyper_Location = new Rectangle(300, 300, 150, 300);
+            _enemy_Location = new Rectangle(610, 90, 300, 300);
+            _hyper_hit = false;
             _using_Headbutt = false;
             _using_Body_Press = false;
             _using_Defense_Curl = false;
@@ -53,7 +54,7 @@ namespace Pokemon
 
         public void Update(GameTime gametime)
         {
-            if (_using_Headbutt == true)
+            if (_using_Headbutt)
             {
                 _battle_time += (float)gametime.ElapsedGameTime.TotalSeconds;
                 _frame_time += (float)gametime.ElapsedGameTime.TotalSeconds;
@@ -76,7 +77,7 @@ namespace Pokemon
                     _using_Headbutt = false;
                 }
             }
-            if (_using_Body_Press == true)
+            if (_using_Body_Press)
             {
                 _battle_time += (float)gametime.ElapsedGameTime.TotalSeconds;
                 _frame_time += (float)gametime.ElapsedGameTime.TotalSeconds;
@@ -101,28 +102,30 @@ namespace Pokemon
                     _using_Body_Press = false;
                 }
             }
-            if (_using_Hyper_Beam == true)
+            if (_using_Hyper_Beam)
             {
                 _battle_time += (float)gametime.ElapsedGameTime.TotalSeconds;
                 _frame_time += (float)gametime.ElapsedGameTime.TotalSeconds;
-                if (_frame_time >= _hyper_interval)
+                if (!_hyper_hit && _frame_time >= _hyper_interval)
                 {
-                    _hyper_Location.X += 30;
-                    _hyper_Location.Y -= 20;
-                    _frame_time -= _hyper_interval;
+                    _hyper_Location.Width += 10;
+                    _hyper_Location.Y -= 5;
+                    _frame_time = 0;
                 }
-                if (_battle_time >= 0.4)
+                if (_hyper_Location.Intersects(_enemy_Location))
                 {
-                    _frame_time = 1;
-                    if (_frame_time >= 3 && _battle_time >= 4)
+                    _hyper_hit = true;
+                    _impact_Location = new Rectangle(_enemy_Location.X, _enemy_Location.Y, 300, 300);
+                }
+                if (_battle_time >= 1.5)
                     {
                         _using_Hyper_Beam = false;
                         _frame_time = 0;
                         _battle_time = 0;
-                        _hyper_Location.X = 520;
+                        _hyper_hit = false;
+                        _hyper_Location.Width = 150;
                         _hyper_Location.Y = 300;
                     }
-                }
             }
         }
         public bool BodyPress
@@ -190,19 +193,15 @@ namespace Pokemon
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _location, Color.White);
             if (_using_Hyper_Beam)
             {
-                if (_frame_time <= 0)
-                {
-                    spriteBatch.Draw(_hyperTexture, _hyper_Location, Color.White);
-                }
-                if (_battle_time >= 1)
+                spriteBatch.Draw(_hyperTexture, _hyper_Location, Color.White);
+                if (_hyper_hit)
                 {
                     spriteBatch.Draw(_impactTexture, _impact_Location, Color.White);
                 }
-                
             }
+            spriteBatch.Draw(_texture, _location, Color.White);
         }
 
     }
