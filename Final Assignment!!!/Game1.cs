@@ -14,7 +14,7 @@ namespace Final_Assignment___
         SpriteFont menuFont, healthFont;
         Rectangle window, menuLocation, moveInfoLocation, battleLocation, arrowSize, enemyLocation, charHealthBar, enemyHealthBar, charHealthImg, enemyHealthImg, charIconSize, enemyIconSize;
         Snorlax snorlax;
-        Texture2D snorlaxTexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon, hyperBeam, hyperBeamImpact;
+        Texture2D snorlaxTexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon, hyperBeam, hyperBeamImpact, defenseCurl;
         Vector2 moveType, moveName1, moveName2, moveName3, moveName4, typeText, PPText, movePP, charNameText, enemyNameText, totalHealthText, healthAmountText;
         int healthAmount, totalHealth;
 
@@ -56,7 +56,7 @@ namespace Final_Assignment___
             enemyHealthImg = new Rectangle(70, 50, 370, 100);
             enemyHealthBar = new Rectangle(170, 88, 235, 30);
             enemyNameText = new Vector2(100, 40);
-            snorlax = new Snorlax(snorlaxTexture, hyperBeam, hyperBeamImpact, new Rectangle(120, 283, 400, 400));
+            snorlax = new Snorlax(snorlaxTexture, hyperBeam, hyperBeamImpact, defenseCurl, new Rectangle(120, 283, 400, 400));
             enemyLocation = new Rectangle(610, 90, 300, 300);
 
             healthAmount = snorlax.Health;
@@ -78,6 +78,7 @@ namespace Final_Assignment___
             nameIcon = Content.Load<Texture2D>("nameIcon");
             hyperBeam = Content.Load<Texture2D>("hyperBeam");
             hyperBeamImpact = Content.Load<Texture2D>("hyperBeamImpact");
+            defenseCurl = Content.Load<Texture2D>("defenseCurl");
             // TODO: use this.Content to load your game content here
         }
 
@@ -109,7 +110,7 @@ namespace Final_Assignment___
                 if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
                 {
                     snorlax.Move1PP -= 1;
-                    snorlax.Headbutt = true;
+                    snorlax.CurrentMove = Snorlax.Move.headbutt;
                 }
             }
             if (arrowSize.X == 20 && arrowSize.Y == 680)
@@ -117,7 +118,7 @@ namespace Final_Assignment___
                 if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
                 {
                     snorlax.Move2PP -= 1;
-                    snorlax.BodyPress = true;
+                    snorlax.CurrentMove = Snorlax.Move.bodyPress;
                 }
             }
             if (arrowSize.X == 290 && arrowSize.Y == 600)
@@ -125,7 +126,15 @@ namespace Final_Assignment___
                 if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
                 {
                     snorlax.Move3PP -= 1;
-                    snorlax.HyperBeam = true;
+                    snorlax.CurrentMove = Snorlax.Move.hyperBeam;
+                }
+            }
+            if (arrowSize.X == 290 && arrowSize.Y == 680)
+            {
+                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                {
+                    snorlax.Move4PP -= 1;
+                    snorlax.CurrentMove = Snorlax.Move.defenseCurl;
                 }
             }
             snorlax.Update(gameTime);
