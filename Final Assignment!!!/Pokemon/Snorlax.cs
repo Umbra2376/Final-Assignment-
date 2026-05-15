@@ -14,15 +14,17 @@ namespace Pokemon
 {
     class Snorlax
     {
-        private Texture2D _texture;
-        private Rectangle _location;
-        private bool _using_Headbutt, _using_Body_Press, _using_Hyper_Beam, _using_Defense_Curl;
+        private Texture2D _texture, _hyperTexture, _impactTexture;
+        private Rectangle _location, _hyper_Location, _impact_Location;
+        private bool _using_Headbutt, _using_Body_Press, _using_Hyper_Beam, _using_Defense_Curl, _draw_Hyper_Beam;
         private string _move1, _move2, _move3, _move4, _move_type, _name;
         private int _speed, _health, _defense, _attack, _sDefense, _move1_PP, _move2_PP, _move3_PP, _move4_PP;
-        private float _battle_time, _frame_time;
-        public Snorlax(Texture2D texture, Rectangle location)
+        private float _battle_time, _frame_time, _hyper_interval;
+        public Snorlax(Texture2D texture, Texture2D hyperTexture, Texture2D impactTexture, Rectangle location)
         {
             _texture = texture;
+            _hyperTexture = hyperTexture;
+            _impactTexture = impactTexture;
             _location = location;
             _move1 = "Headbutt";
             _move2 = "Body Press";
@@ -34,12 +36,15 @@ namespace Pokemon
             _move2_PP = 10;
             _move3_PP = 5;
             _move4_PP = 30;
+            _hyper_interval = 0.03f;
             Random stats = new Random();
             _speed = stats.Next(20, 41);
             _health = stats.Next(150, 171);
             _defense = stats.Next(50, 81);
             _attack = stats.Next(100, 121);
             _sDefense = stats.Next(100, 121);
+            _hyper_Location = new Rectangle(300, 300, 300, 300);
+            _impact_Location = new Rectangle(610, 90, 300, 300);
             _using_Headbutt = false;
             _using_Body_Press = false;
             _using_Defense_Curl = false;
@@ -96,6 +101,29 @@ namespace Pokemon
                     _using_Body_Press = false;
                 }
             }
+            if (_using_Hyper_Beam == true)
+            {
+                _battle_time += (float)gametime.ElapsedGameTime.TotalSeconds;
+                _frame_time += (float)gametime.ElapsedGameTime.TotalSeconds;
+                if (_frame_time >= _hyper_interval)
+                {
+                    _hyper_Location.X += 30;
+                    _hyper_Location.Y -= 20;
+                    _frame_time -= _hyper_interval;
+                }
+                if (_battle_time >= 0.4)
+                {
+                    _frame_time = 1;
+                    if (_frame_time >= 3 && _battle_time >= 4)
+                    {
+                        _using_Hyper_Beam = false;
+                        _frame_time = 0;
+                        _battle_time = 0;
+                        _hyper_Location.X = 520;
+                        _hyper_Location.Y = 300;
+                    }
+                }
+            }
         }
         public bool BodyPress
         {
@@ -106,6 +134,11 @@ namespace Pokemon
         {
             get { return _using_Headbutt; }
             set { _using_Headbutt = value; }
+        }
+        public bool HyperBeam
+        {
+            get { return _using_Hyper_Beam; }
+            set { _using_Hyper_Beam = value; }
         }
         public int Health
         {
@@ -155,10 +188,21 @@ namespace Pokemon
         {
             get { return _name;  }
         }
-
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_texture, _location, Color.White);
+            if (_using_Hyper_Beam)
+            {
+                if (_frame_time <= 0)
+                {
+                    spriteBatch.Draw(_hyperTexture, _hyper_Location, Color.White);
+                }
+                if (_battle_time >= 1)
+                {
+                    spriteBatch.Draw(_impactTexture, _impact_Location, Color.White);
+                }
+                
+            }
         }
 
     }

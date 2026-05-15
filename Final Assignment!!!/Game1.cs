@@ -12,9 +12,9 @@ namespace Final_Assignment___
         private SpriteBatch _spriteBatch;
         KeyboardState currentState, oldState;
         SpriteFont menuFont, healthFont;
-        Rectangle window, menuLocation, moveInfoLocation, battleLocation, arrowSize, enemyLocation, charHealthBar, enemyHealthBar, charHealthImg, enemyHealthImg, charIconSize, enemyIconSize;
+        Rectangle window, menuLocation, moveInfoLocation, battleLocation, arrowSize, enemyLocation, charHealthBar, enemyHealthBar, charHealthImg, enemyHealthImg, charIconSize, enemyIconSize, hyperLocation, impactLocation;
         Snorlax snorlax;
-        Texture2D snorlaxTexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon;
+        Texture2D snorlaxTexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon, hyperBeam, hyperBeamImpact;
         Vector2 moveType, moveName1, moveName2, moveName3, moveName4, typeText, PPText, movePP, charNameText, enemyNameText, totalHealthText, healthAmountText;
         int healthAmount, totalHealth;
 
@@ -52,7 +52,11 @@ namespace Final_Assignment___
             charHealthImg = new Rectangle(570, 390, 370, 100);
             charIconSize = new Rectangle(530, 340, 460, 200);
             charHealthBar = new Rectangle(670, 428, 235, 30);
-            snorlax = new Snorlax(snorlaxTexture, new Rectangle(120, 283, 400, 400));
+            enemyIconSize = new Rectangle(20, 20, 460, 150);
+            enemyHealthImg = new Rectangle(70, 50, 370, 100);
+            enemyHealthBar = new Rectangle(170, 88, 235, 30);
+            enemyNameText = new Vector2(100, 40);
+            snorlax = new Snorlax(snorlaxTexture, hyperBeam, hyperBeamImpact, new Rectangle(120, 283, 400, 400));
             enemyLocation = new Rectangle(610, 90, 300, 300);
 
             healthAmount = snorlax.Health;
@@ -72,6 +76,8 @@ namespace Final_Assignment___
             battleImg = Content.Load<Texture2D>("grassBattlefield");
             arrow = Content.Load<Texture2D>("select");
             nameIcon = Content.Load<Texture2D>("nameIcon");
+            hyperBeam = Content.Load<Texture2D>("hyperBeam");
+            hyperBeamImpact = Content.Load<Texture2D>("hyperBeamImpact");
             // TODO: use this.Content to load your game content here
         }
 
@@ -108,10 +114,18 @@ namespace Final_Assignment___
             }
             if (arrowSize.X == 20 && arrowSize.Y == 680)
             {
-                if (currentState.IsKeyDown((Keys)Keys.A) && oldState.IsKeyUp(Keys.A))
+                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
                 {
                     snorlax.Move2PP -= 1;
                     snorlax.BodyPress = true;
+                }
+            }
+            if (arrowSize.X == 290 && arrowSize.Y == 600)
+            {
+                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                {
+                    snorlax.Move3PP -= 1;
+                    snorlax.HyperBeam = true;
                 }
             }
             snorlax.Update(gameTime);
@@ -163,6 +177,10 @@ namespace Final_Assignment___
             _spriteBatch.DrawString(healthFont, snorlax.Name, charNameText, Color.Black);
             _spriteBatch.DrawString(healthFont, "/" + Convert.ToString(totalHealth), totalHealthText, Color.Black);
             _spriteBatch.DrawString(healthFont, Convert.ToString(healthAmount), healthAmountText, Color.Black);
+            _spriteBatch.Draw(nameIcon, enemyIconSize, Color.White);
+            _spriteBatch.Draw(healthbar, enemyHealthBar, Color.LimeGreen);
+            _spriteBatch.Draw(healthIcon, enemyHealthImg, Color.White);
+            _spriteBatch.DrawString(healthFont, "ARCANINE", enemyNameText, Color.Black);
             _spriteBatch.End();
 
             base.Draw(gameTime);
