@@ -14,10 +14,25 @@ namespace Final_Assignment___
         SpriteFont menuFont, healthFont;
         Rectangle window, menuLocation, moveInfoLocation, battleLocation, arrowSize, enemyLocation, charHealthBar, enemyHealthBar, charHealthImg, enemyHealthImg, charIconSize, enemyIconSize;
         Snorlax snorlax;
-        Texture2D snorlaxTexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon, hyperBeam, hyperBeamImpact, defenseCurl;
+        Arcanine arcanine;
+        Texture2D snorlaxTexture, AOtexture, AWtexture, menu, healthbar, healthIcon, battleImg, arrow, arcanineWild, nameIcon, hyperBeam, hyperBeamImpact, defenseCurl;
         Vector2 moveType, moveName1, moveName2, moveName3, moveName4, typeText, PPText, movePP, charNameText, enemyNameText, totalHealthText, healthAmountText;
         int healthAmount, totalHealth;
-
+        enum Pokemon
+        {
+            snorlax, ninetails, exeggutor, arcanine, flygon, sceptile, electivire
+        }
+        enum Enemy
+        {
+            arcanine, ninetails, exeggutor, flygon, sceptile, electivire
+        }
+        enum SnorlaxText
+        {
+            bodyPress, headbutt, hyperBeam, defenseCurl, none
+        }
+        private Pokemon currentPokemon;
+        private Enemy currentEnemy;
+        private SnorlaxText snorlaxText;
 
         public Game1()
         {
@@ -57,17 +72,22 @@ namespace Final_Assignment___
             enemyHealthBar = new Rectangle(170, 88, 235, 30);
             enemyNameText = new Vector2(100, 40);
             snorlax = new Snorlax(snorlaxTexture, hyperBeam, hyperBeamImpact, defenseCurl, new Rectangle(120, 283, 400, 400));
+            arcanine = new Arcanine(AWtexture, AOtexture, new Rectangle(), new Rectangle());
             enemyLocation = new Rectangle(610, 90, 300, 300);
 
             healthAmount = snorlax.Health;
             totalHealth = snorlax.Health;
+
+            currentPokemon = Pokemon.snorlax;
+            snorlaxText = SnorlaxText.none;
+            currentEnemy = Enemy.arcanine;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             snorlaxTexture = Content.Load<Texture2D>("snorlax");
-            arcanineWild = Content.Load<Texture2D>("arcanine");
+            AWtexture = Content.Load<Texture2D>("arcanine");
             healthbar = Content.Load<Texture2D>("tile");
             healthIcon = Content.Load<Texture2D>("healthBar");
             menu = Content.Load<Texture2D>("starterMoveset");
@@ -105,36 +125,43 @@ namespace Final_Assignment___
                 arrowSize.Y = 600;
             else if (arrowSize.X == 290 && arrowSize.Y == 680 && currentState.IsKeyDown(Keys.Left))
                 arrowSize.X = 20;
-            if (arrowSize.X == 20 && arrowSize.Y == 600)
+            if (currentPokemon == Pokemon.snorlax)
             {
-                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                if (arrowSize.X == 20 && arrowSize.Y == 600)
                 {
-                    snorlax.Move1PP -= 1;
-                    snorlax.CurrentMove = Snorlax.Move.headbutt;
+                    if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                    {
+                        snorlax.Move1PP -= 1;
+                        snorlax.CurrentMove = Snorlax.Move.headbutt;
+                        snorlaxText = SnorlaxText.headbutt;
+                    }
                 }
-            }
-            if (arrowSize.X == 20 && arrowSize.Y == 680)
-            {
-                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                if (arrowSize.X == 20 && arrowSize.Y == 680)
                 {
-                    snorlax.Move2PP -= 1;
-                    snorlax.CurrentMove = Snorlax.Move.bodyPress;
+                    if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                    {
+                        snorlax.Move2PP -= 1;
+                        snorlax.CurrentMove = Snorlax.Move.bodyPress;
+                        snorlaxText = SnorlaxText.bodyPress;
+                    }
                 }
-            }
-            if (arrowSize.X == 290 && arrowSize.Y == 600)
-            {
-                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                if (arrowSize.X == 290 && arrowSize.Y == 600)
                 {
-                    snorlax.Move3PP -= 1;
-                    snorlax.CurrentMove = Snorlax.Move.hyperBeam;
+                    if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                    {
+                        snorlax.Move3PP -= 1;
+                        snorlax.CurrentMove = Snorlax.Move.hyperBeam;
+                        snorlaxText = SnorlaxText.hyperBeam;
+                    }
                 }
-            }
-            if (arrowSize.X == 290 && arrowSize.Y == 680)
-            {
-                if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                if (arrowSize.X == 290 && arrowSize.Y == 680)
                 {
-                    snorlax.Move4PP -= 1;
-                    snorlax.CurrentMove = Snorlax.Move.defenseCurl;
+                    if (currentState.IsKeyDown(Keys.A) && oldState.IsKeyUp(Keys.A))
+                    {
+                        snorlax.Move4PP -= 1;
+                        snorlax.CurrentMove = Snorlax.Move.defenseCurl;
+                        snorlaxText = SnorlaxText.defenseCurl;
+                    }
                 }
             }
             snorlax.Update(gameTime);
@@ -150,34 +177,37 @@ namespace Final_Assignment___
             _spriteBatch.Begin();
             _spriteBatch.Draw(battleImg, battleLocation, Color.White);
             _spriteBatch.Draw(arcanineWild, enemyLocation, Color.White);
-            snorlax.Draw(_spriteBatch);
-            _spriteBatch.Draw(menu, menuLocation, Color.White);
-            _spriteBatch.Draw(menu, moveInfoLocation, Color.White);
-            _spriteBatch.DrawString(menuFont, snorlax.Move1, moveName1, Color.Black);
-            _spriteBatch.DrawString(menuFont, snorlax.Move2, moveName2, Color.Black);
-            _spriteBatch.DrawString(menuFont, snorlax.Move3, moveName3, Color.Black);
-            _spriteBatch.DrawString(menuFont, snorlax.Move4, moveName4, Color.Black);
-            _spriteBatch.DrawString(menuFont, "Type/", typeText, Color.Black);
-            _spriteBatch.DrawString(menuFont, snorlax.MoveType, moveType, Color.Black);
-            if (arrowSize.X == 20 && arrowSize.Y == 600)
+            if (currentPokemon == Pokemon.snorlax)
             {
-                _spriteBatch.DrawString(menuFont, "PP         /15", PPText, Color.Black);
-                _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move1PP), movePP, Color.Black);
-            }
-            if (arrowSize.X == 20 && arrowSize.Y == 680)
-            {
-                _spriteBatch.DrawString(menuFont, "PP         /10", PPText, Color.Black);
-                _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move2PP), movePP, Color.Black);
-            }
-            if (arrowSize.X == 290 && arrowSize.Y == 600)
-            {
-                _spriteBatch.DrawString(menuFont, "PP         /5", PPText, Color.Black);
-                _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move3PP), movePP, Color.Black);
-            }
-            if (arrowSize.X == 290 && arrowSize.Y == 680)
-            {
-                _spriteBatch.DrawString(menuFont, "PP         /30", PPText, Color.Black);
-                _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move4PP), movePP, Color.Black);
+                snorlax.Draw(_spriteBatch);
+                _spriteBatch.Draw(menu, menuLocation, Color.White);
+                _spriteBatch.Draw(menu, moveInfoLocation, Color.White);
+                _spriteBatch.DrawString(menuFont, snorlax.Move1, moveName1, Color.Black);
+                _spriteBatch.DrawString(menuFont, snorlax.Move2, moveName2, Color.Black);
+                _spriteBatch.DrawString(menuFont, snorlax.Move3, moveName3, Color.Black);
+                _spriteBatch.DrawString(menuFont, snorlax.Move4, moveName4, Color.Black);
+                _spriteBatch.DrawString(menuFont, "Type/", typeText, Color.Black);
+                _spriteBatch.DrawString(menuFont, snorlax.MoveType, moveType, Color.Black);
+                if (arrowSize.X == 20 && arrowSize.Y == 600)
+                {
+                    _spriteBatch.DrawString(menuFont, "PP         /15", PPText, Color.Black);
+                    _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move1PP), movePP, Color.Black);
+                }
+                if (arrowSize.X == 20 && arrowSize.Y == 680)
+                {
+                    _spriteBatch.DrawString(menuFont, "PP         /10", PPText, Color.Black);
+                    _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move2PP), movePP, Color.Black);
+                }
+                if (arrowSize.X == 290 && arrowSize.Y == 600)
+                {
+                    _spriteBatch.DrawString(menuFont, "PP         /5", PPText, Color.Black);
+                    _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move3PP), movePP, Color.Black);
+                }
+                if (arrowSize.X == 290 && arrowSize.Y == 680)
+                {
+                    _spriteBatch.DrawString(menuFont, "PP         /30", PPText, Color.Black);
+                    _spriteBatch.DrawString(menuFont, Convert.ToString(snorlax.Move4PP), movePP, Color.Black);
+                }   
             }
             _spriteBatch.Draw(arrow, arrowSize, Color.Black);
             _spriteBatch.Draw(nameIcon, charIconSize, Color.White);
