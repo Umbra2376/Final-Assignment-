@@ -20,8 +20,8 @@ namespace Pokemon
         private Rectangle _Olocation, _Wlocation;
         private bool _wild;
         private string _move1, _move2, _move3, _move4, _name;
-        private int _speed, _health, _defense, _attack, _sDefense, _move1_PP, _move2_PP, _move3_PP, _move4_PP;
-        private float _battle_time, _frame_time, _hyper_interval, _alpha;
+        private int _speed, _health, _defense, _attack, _sAttack, _sDefense, _move1_PP, _move2_PP, _move3_PP, _move4_PP;
+        private float _battle_time, _frame_time, _alpha;
         public enum Move
         {
             defenseCurl, bodyPress, hyperBeam, headbutt, none
@@ -33,22 +33,22 @@ namespace Pokemon
             _Otexture = Otexture;
             _Wlocation = Wlocation;
             _Olocation = Olocation;
-            _move1 = "Headbutt";
-            _move2 = "Body Press";
-            _move3 = "Hyper Beam";
-            _move4 = "Defense Curl";
+            _move1 = "Flamethrower";
+            _move2 = "Crunch";
+            _move3 = "Fire Blast";
+            _move4 = "Howl";
             _name = "ARCANINE";
             _move1_PP = 15;
-            _move2_PP = 10;
+            _move2_PP = 15;
             _move3_PP = 5;
-            _move4_PP = 30;
-            _hyper_interval = 0.03f;
+            _move4_PP = 40;
             Random stats = new Random();
-            _speed = stats.Next(20, 41);
-            _health = stats.Next(150, 171);
-            _defense = stats.Next(50, 81);
+            _speed = stats.Next(80, 111);
+            _health = stats.Next(80, 101);
+            _defense = stats.Next(70, 91);
             _attack = stats.Next(100, 121);
-            _sDefense = stats.Next(100, 121);
+            _sAttack = stats.Next(90, 111);
+            _sDefense = stats.Next(70, 91);
             _currentMove = Move.none;
             _wild = false;
         }
